@@ -9,30 +9,32 @@ expect.extend({ toMatchFileContent })
 test('should fail if the expected path does not exist', () => {
   const filePath = 'non-existing-file-path'
 
-  expect(() => expect(1).toMatchFileContent(filePath)).toThrowError(`Expected file at '${filePath}' does not exist`)
+  expect(() => expect('content').toMatchFileContent(filePath)).toThrowError(
+    `Expected file at '${filePath}' does not exist`
+  )
 })
 
 describe('to match', () => {
   test('should fail if the received content does not match the expected path content', () => {
-    const filePath = 'package.json'
+    const filePath = 'fixtures/file1'
+    const receivedContent = fs.readFileSync('fixtures/file2', 'utf8')
 
-    expect(() => expect('test').toMatchFileContent(filePath)).toThrowError(
+    expect(() => expect(receivedContent).toMatchFileContent(filePath)).toThrowError(
       new RegExp(`^Expected file content at '${filePath}' does not match received content`)
     )
   })
 
   test('should pass if the received content matches the expected path content', () => {
-    const filePath = 'package.json'
-    const content = fs.readFileSync(filePath, 'utf8')
+    const content = fs.readFileSync('fixtures/file1-copy', 'utf8')
 
-    expect(() => expect(content).toMatchFileContent(filePath)).not.toThrowError()
+    expect(() => expect(content).toMatchFileContent('fixtures/file1')).not.toThrowError()
   })
 })
 
 describe('to not match', () => {
   test('should fail if the received content matches the expected path content', () => {
-    const filePath = 'fixtures/basic'
-    const content = fs.readFileSync(filePath, 'utf8')
+    const filePath = 'fixtures/file1'
+    const content = fs.readFileSync('fixtures/file1-copy', 'utf8')
 
     expect(() => expect(content).not.toMatchFileContent(filePath)).toThrowError(
       `Expected file content at '${filePath}' does match received content`
@@ -40,6 +42,8 @@ describe('to not match', () => {
   })
 
   test('should pass if the received content does not match the expected path content', () => {
-    expect(() => expect('test').not.toMatchFileContent('package.json')).not.toThrowError()
+    const receivedContent = fs.readFileSync('fixtures/file2', 'utf8')
+
+    expect(() => expect(receivedContent).not.toMatchFileContent('fixtures/file1')).not.toThrowError()
   })
 })
