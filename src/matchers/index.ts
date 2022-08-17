@@ -1,4 +1,5 @@
-import { type expect } from 'vitest'
+import { type ExpectationResult } from '../libs/result'
+import { type DropFirstParameter } from '../libs/typescript'
 
 export type Matcher<TReceived, TReceivedArgs extends readonly unknown[]> = (
   this: MatcherState,
@@ -9,7 +10,3 @@ export type Matcher<TReceived, TReceivedArgs extends readonly unknown[]> = (
 export type Expected<TMatcher extends Matcher<never, never>> = (...expectedArgs: DropFirstParameter<TMatcher>) => void
 
 type MatcherState = ReturnType<Vi.ExpectStatic['getState']>
-type ExpectationResult = ReturnType<Parameters<typeof expect['extend']>[0][string]>
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type DropFirstParameter<T extends (...args: any) => any> = Parameters<T> extends [unknown, ...infer U] ? U : never

@@ -5,7 +5,4 @@ export default defineBuildConfig({
   declaration: true,
   entries: ['src/index'],
   externals: ['vitest'],
-  rollup: {
-    emitCJS: true,
-  },
 })

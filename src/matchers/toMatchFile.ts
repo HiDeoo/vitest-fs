@@ -1,5 +1,5 @@
 import { getFile } from '../libs/fs'
-import { getResultMessage } from '../libs/result'
+import { getResultMessageWithDiff } from '../libs/result'
 
 import { type Matcher } from '.'
 
@@ -21,7 +21,7 @@ export const toMatchFile: Matcher<string, [string]> = function (receivedPath, ex
   const pass = equals(receivedFile.content, expectedFile.content)
 
   return {
-    message: getResultMessage(
+    message: getResultMessageWithDiff(
       `Expected file content at '${expectedPath}' does${
         isNot ? '' : ' not'
       } match received file content at '${receivedPath}'`,
