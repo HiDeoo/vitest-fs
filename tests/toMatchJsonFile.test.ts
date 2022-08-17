@@ -7,16 +7,32 @@ expect.extend({ toMatchJsonFile })
 test('should fail if the received path does not exist', () => {
   const filePath = 'non-existing-file-path'
 
-  expect(() => expect(filePath).toMatchJsonFile('fixtures/file1')).toThrowError(
+  expect(() => expect(filePath).toMatchJsonFile('fixtures/file3.json')).toThrowError(
     `Received file at '${filePath}' does not exist`
+  )
+})
+
+test('should fail if the received path is not a valid JSON file', () => {
+  const filePath = 'fixtures/file1'
+
+  expect(() => expect(filePath).toMatchJsonFile('fixtures/file3.json')).toThrowError(
+    `Received file at '${filePath}' is not a valid JSON file`
   )
 })
 
 test('should fail if the expected path does not exist', () => {
   const filePath = 'non-existing-file-path'
 
-  expect(() => expect('fixtures/file1').toMatchJsonFile(filePath)).toThrowError(
+  expect(() => expect('fixtures/file3.json').toMatchJsonFile(filePath)).toThrowError(
     `Expected file at '${filePath}' does not exist`
+  )
+})
+
+test('should fail if the expected path is not a valid JSON file', () => {
+  const filePath = 'fixtures/file1'
+
+  expect(() => expect('fixtures/file3.json').toMatchJsonFile(filePath)).toThrowError(
+    `Expected file at '${filePath}' is not a valid JSON file`
   )
 })
 

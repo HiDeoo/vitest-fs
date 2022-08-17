@@ -6,10 +6,10 @@ import { type Matcher } from '.'
 export const toMatchFileContent: Matcher<string, [string]> = function (receivedContent, expectedPath) {
   const { equals, isNot, utils } = this
 
-  const expectedFile = getFile(expectedPath, 'expected')
+  const expectedFile = getFile(expectedPath, { type: 'expected' })
 
-  if (!expectedFile.exists) {
-    return expectedFile.result
+  if (expectedFile.error) {
+    return expectedFile.error
   }
 
   const pass = equals(receivedContent, expectedFile.content)

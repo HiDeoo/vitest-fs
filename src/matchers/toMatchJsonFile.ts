@@ -1,47 +1,31 @@
 import { getFile } from '../libs/fs'
-import { getResultError, getResultMessageWithDiff } from '../libs/result'
+import { getResultMessageWithDiff } from '../libs/result'
 
 import { type Matcher } from '.'
 
 export const toMatchJsonFile: Matcher<string, [string]> = function (receivedPath, expectedPath) {
   const { equals, isNot, utils } = this
 
-  const receivedFile = getFile(receivedPath, 'received')
+  const receivedFile = getFile(receivedPath, { json: true, type: 'received' })
 
-  if (!receivedFile.exists) {
-    return receivedFile.result
+  if (receivedFile.error) {
+    return receivedFile.error
   }
 
-  const expectedFile = getFile(expectedPath, 'expected')
+  const expectedFile = getFile(expectedPath, { json: true, type: 'expected' })
 
-  if (!expectedFile.exists) {
-    return expectedFile.result
+  if (expectedFile.error) {
+    return expectedFile.error
   }
 
-  let receivedFileJson
-
-  try {
-    receivedFileJson = JSON.parse(receivedFile.content)
-  } catch {
-    return getResultError('Received file is not a valid JSON file')
-  }
-
-  let expectedFileJson
-
-  try {
-    expectedFileJson = JSON.parse(expectedFile.content)
-  } catch {
-    return getResultError('Expected file is not a valid JSON file')
-  }
-
-  const pass = equals(receivedFileJson, expectedFileJson)
+  const pass = equals(receivedFile.json, expectedFile.json)
 
   return {
     message: getResultMessageWithDiff(
       `Expected file JSON content at '${expectedPath}' does${
         isNot ? '' : ' not'
       } match received file JSON content at '${receivedPath}'`,
-      utils.diff(receivedFileJson, expectedFileJson)
+      utils.diff(receivedFile.json, expectedFile.json)
     ),
     pass,
   }
