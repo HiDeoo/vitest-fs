@@ -1,25 +1,22 @@
-import fs from 'node:fs'
+import { getFile } from '../libs/fs'
 
 import { type Matcher } from '.'
 
-export const toMatchFileContent: Matcher<string, string> = function (receivedContent, expectedPath) {
+export const toMatchFileContent: Matcher<string, [string]> = function (receivedContent, expectedPath) {
   const { equals, isNot, utils } = this
 
-  if (!fs.existsSync(expectedPath)) {
-    return {
-      message: () => `Expected file at '${expectedPath}' does not exist`,
-      pass: false,
-    }
+  const expectedFile = getFile(expectedPath, 'expected')
+
+  if (!expectedFile.exists) {
+    return expectedFile.result
   }
 
-  const expectedContent = fs.readFileSync(expectedPath, 'utf8')
-
-  const pass = equals(receivedContent, expectedContent)
+  const pass = equals(receivedContent, expectedFile.content)
 
   return {
     message: () => {
       const message = `Expected file content at '${expectedPath}' does${isNot ? '' : ' not'} match received content`
-      const diff = utils.diff(expectedContent, receivedContent)
+      const diff = utils.diff(expectedFile.content, receivedContent)
 
       if (!diff) {
         return message
