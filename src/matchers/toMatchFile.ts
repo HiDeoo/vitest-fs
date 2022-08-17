@@ -1,4 +1,5 @@
 import { getFile } from '../libs/fs'
+import { getResultMessage } from '../libs/result'
 
 import { type Matcher } from '.'
 
@@ -20,20 +21,12 @@ export const toMatchFile: Matcher<string, [string]> = function (receivedPath, ex
   const pass = equals(receivedFile.content, expectedFile.content)
 
   return {
-    message: () => {
-      const message = `Expected file content at '${expectedPath}' does${
+    message: getResultMessage(
+      `Expected file content at '${expectedPath}' does${
         isNot ? '' : ' not'
-      } match received file content at '${receivedPath}'`
-      const diff = utils.diff(expectedFile.content, receivedFile.content)
-
-      if (!diff) {
-        return message
-      }
-
-      return `${message}
-
-${diff}`
-    },
+      } match received file content at '${receivedPath}'`,
+      utils.diff(expectedFile.content, receivedFile.content)
+    ),
     pass,
   }
 }
