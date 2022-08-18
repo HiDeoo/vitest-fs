@@ -1,5 +1,6 @@
 import { type Matcher } from './matchers'
 import { toBeDirectory } from './matchers/toBeDirectory'
+import { toBeExecutable } from './matchers/toBeExecutable'
 import { toBeFile } from './matchers/toBeFile'
 import { toBeJsonFile } from './matchers/toBeJsonFile'
 import { toBeSymbolicLink } from './matchers/toBeSymbolicLink'
@@ -11,6 +12,7 @@ import { toEqualJsonFileContent } from './matchers/toEqualJsonFileContent'
 
 export {
   toBeDirectory,
+  toBeExecutable,
   toBeFile,
   toBeJsonFile,
   toBeSymbolicLink,
@@ -23,6 +25,7 @@ export {
 
 export interface Matchers {
   toBeDirectory: Matcher<typeof toBeDirectory>
+  toBeExecutable: Matcher<typeof toBeExecutable>
   toBeFile: Matcher<typeof toBeFile>
   toBeJsonFile: Matcher<typeof toBeJsonFile>
   toBeSymbolicLink: Matcher<typeof toBeSymbolicLink>
