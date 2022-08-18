@@ -23,7 +23,7 @@
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
-    "@hideoo/eslint-config": "0.5.0",
+    "@hideoo/eslint-config": "0.6.0",
     "@hideoo/prettier-config": "0.1.1",
     "@hideoo/tsconfig": "0.1.0",
     "eslint": "8.22.0",

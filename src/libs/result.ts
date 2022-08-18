@@ -1,16 +1,26 @@
-import { type expect } from 'vitest'
-
-export function getResultMessageWithDiff(message: string, diff: string): SyncExpectationResult['message'] {
-  return () => {
-    if (!diff) {
-      return message
-    }
-
-    return `${message}
-
-${diff}`
+export function getResult(pass: boolean, message: string): Result {
+  return {
+    message: () => message,
+    pass,
   }
 }
 
-export type ExpectationResult = ReturnType<Parameters<typeof expect['extend']>[0][string]>
-type SyncExpectationResult = Awaited<ExpectationResult>
+export function getResultWithDiff(pass: boolean, message: string, diff: string): Result {
+  return {
+    message: () => {
+      if (!diff) {
+        return message
+      }
+
+      return `${message}
+
+  ${diff}`
+    },
+    pass,
+  }
+}
+
+export interface Result {
+  message: () => string
+  pass: boolean
+}

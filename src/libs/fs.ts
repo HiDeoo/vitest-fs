@@ -1,15 +1,21 @@
 import fs from 'node:fs'
 
-export function getFile(path: string, options?: FileOptions) {
+import { getResult } from './result'
+
+export function getFile(path: unknown, options?: FileOptions) {
+  let content = ''
+  let json = {}
+
+  if (typeof path !== 'string') {
+    return { content, error: getResult(false, `Expected path to be a string, but got '${typeof path}'`), json }
+  }
+
   const exists = fs.existsSync(path)
 
   const resultPrefix =
     options?.type === 'expected' ? 'Expected file' : options?.type === 'received' ? 'Received file' : 'File'
 
   let message = ''
-
-  let content = ''
-  let json = {}
 
   if (exists) {
     content = fs.readFileSync(path, 'utf8')
@@ -26,13 +32,7 @@ export function getFile(path: string, options?: FileOptions) {
   }
 
   const didError = message.length > 0
-
-  const error = didError
-    ? {
-        message: () => message,
-        pass: !didError,
-      }
-    : undefined
+  const error = didError ? getResult(!didError, message) : undefined
 
   return { content, error, json }
 }

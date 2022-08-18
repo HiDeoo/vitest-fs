@@ -1,9 +1,9 @@
 import { getFile } from '../libs/fs'
-import { getResultMessageWithDiff } from '../libs/result'
+import { getResultWithDiff } from '../libs/result'
 
-import { type Matcher } from '.'
+import { type MatcherState } from '.'
 
-export const toEqualJsonFile: Matcher<string, [string]> = function (receivedPath, expectedPath) {
+export function toEqualJsonFile(this: MatcherState, receivedPath: string, expectedPath: string) {
   const { equals, isNot, utils } = this
 
   const receivedFile = getFile(receivedPath, { json: true, type: 'received' })
@@ -20,13 +20,11 @@ export const toEqualJsonFile: Matcher<string, [string]> = function (receivedPath
 
   const pass = equals(receivedFile.json, expectedFile.json)
 
-  return {
-    message: getResultMessageWithDiff(
-      `Expected file JSON content at '${expectedPath}' does${
-        isNot ? '' : ' not'
-      } equal received file JSON content at '${receivedPath}'`,
-      utils.diff(receivedFile.json, expectedFile.json)
-    ),
+  return getResultWithDiff(
     pass,
-  }
+    `Expected file JSON content at '${expectedPath}' does${
+      isNot ? '' : ' not'
+    } equal received file JSON content at '${receivedPath}'`,
+    utils.diff(receivedFile.json, expectedFile.json)
+  )
 }
