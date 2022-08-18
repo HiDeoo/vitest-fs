@@ -1,14 +1,14 @@
 import { type Expected } from './matchers'
-import { toMatchFile } from './matchers/toMatchFile'
-import { toMatchFileContent } from './matchers/toMatchFileContent'
-import { toMatchJsonFile } from './matchers/toMatchJsonFile'
+import { toEqualFile } from './matchers/toEqualFile'
+import { toEqualFileContent } from './matchers/toEqualFileContent'
+import { toEqualJsonFile } from './matchers/toEqualJsonFile'
 
-export { toMatchFile, toMatchFileContent, toMatchJsonFile }
+export { toEqualFile, toEqualFileContent, toEqualJsonFile }
 
 export interface Matchers {
-  toMatchFile: Expected<typeof toMatchFile>
-  toMatchFileContent: Expected<typeof toMatchFileContent>
-  toMatchJsonFile: Expected<typeof toMatchJsonFile>
+  toEqualFile: Expected<typeof toEqualFile>
+  toEqualFileContent: Expected<typeof toEqualFileContent>
+  toEqualJsonFile: Expected<typeof toEqualJsonFile>
 }
 
 declare global {

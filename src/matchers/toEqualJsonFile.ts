@@ -3,7 +3,7 @@ import { getResultMessageWithDiff } from '../libs/result'
 
 import { type Matcher } from '.'
 
-export const toMatchJsonFile: Matcher<string, [string]> = function (receivedPath, expectedPath) {
+export const toEqualJsonFile: Matcher<string, [string]> = function (receivedPath, expectedPath) {
   const { equals, isNot, utils } = this
 
   const receivedFile = getFile(receivedPath, { json: true, type: 'received' })
@@ -24,7 +24,7 @@ export const toMatchJsonFile: Matcher<string, [string]> = function (receivedPath
     message: getResultMessageWithDiff(
       `Expected file JSON content at '${expectedPath}' does${
         isNot ? '' : ' not'
-      } match received file JSON content at '${receivedPath}'`,
+      } equal received file JSON content at '${receivedPath}'`,
       utils.diff(receivedFile.json, expectedFile.json)
     ),
     pass,
