@@ -47,7 +47,7 @@ export function getStats(path: unknown, options?: StatsOptions) {
     return { error: getResult(false, `${applyKind('path', options?.kind)} at '${path}' does not exist`) }
   }
 
-  const stats = fs.statSync(path)
+  const stats = fs.lstatSync(path)
 
   return { stats }
 }
