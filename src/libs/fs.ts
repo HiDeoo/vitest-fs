@@ -21,6 +21,10 @@ export function getFile(path: unknown, options?: FileOptions) {
   if (exists) {
     content = fs.readFileSync(path, 'utf8')
 
+    if (options?.removeWhitespaces) {
+      content = content.replace(/\s/g, '')
+    }
+
     if (options?.json) {
       try {
         json = JSON.parse(content)
@@ -65,6 +69,7 @@ type Kind = 'expected' | 'received'
 interface FileOptions {
   json?: boolean
   kind?: Kind
+  removeWhitespaces?: boolean | undefined
 }
 
 interface StatsOptions {

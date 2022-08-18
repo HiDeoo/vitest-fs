@@ -3,10 +3,15 @@ import { getResultWithDiff } from '../libs/result'
 
 import { type MatcherState } from '.'
 
-export function toEqualFileContent(this: MatcherState, receivedContent: unknown, expectedPath: string) {
+export function toEqualFileContent(
+  this: MatcherState,
+  receivedContent: unknown,
+  expectedPath: string,
+  options?: ToEqualFileContentOptions
+) {
   const { equals, isNot, utils } = this
 
-  const expectedFile = getFile(expectedPath, { kind: 'expected' })
+  const expectedFile = getFile(expectedPath, { kind: 'expected', removeWhitespaces: options?.removeWhitespaces })
 
   if (expectedFile.error) {
     return expectedFile.error
@@ -17,4 +22,8 @@ export function toEqualFileContent(this: MatcherState, receivedContent: unknown,
     `Expected file content at '${expectedPath}' does${isNot ? '' : ' not'} equal received content`,
     utils.diff(expectedFile.content, receivedContent)
   )
+}
+
+interface ToEqualFileContentOptions {
+  removeWhitespaces?: boolean
 }

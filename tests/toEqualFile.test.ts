@@ -38,6 +38,13 @@ describe('to equal', () => {
 
     expect(() => expect(receivedFilePath).toEqualFile(expectedFilePath)).not.toThrowError()
   })
+
+  test('should pass if the received path content equals the expected path content with whitespaces removed', () => {
+    const receivedFilePath = 'fixtures/file1'
+    const expectedFilePath = 'fixtures/file1-no-whitespaces'
+
+    expect(() => expect(receivedFilePath).toEqualFile(expectedFilePath, { removeWhitespaces: true })).not.toThrowError()
+  })
 })
 
 describe('to not equal', () => {
@@ -46,6 +53,15 @@ describe('to not equal', () => {
     const expectedFilePath = 'fixtures/file1-copy'
 
     expect(() => expect(receivedFilePath).not.toEqualFile(expectedFilePath)).toThrowError(
+      `Expected file content at '${expectedFilePath}' does equal received file content at '${receivedFilePath}'`
+    )
+  })
+
+  test('should fail if the received path content equals the expected path content with whitespaces removed', () => {
+    const receivedFilePath = 'fixtures/file1'
+    const expectedFilePath = 'fixtures/file1-no-whitespaces'
+
+    expect(() => expect(receivedFilePath).not.toEqualFile(expectedFilePath, { removeWhitespaces: true })).toThrowError(
       `Expected file content at '${expectedFilePath}' does equal received file content at '${receivedFilePath}'`
     )
   })
