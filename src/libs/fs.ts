@@ -7,13 +7,14 @@ export function getFile(path: unknown, options?: FileOptions) {
   let json = {}
 
   if (typeof path !== 'string') {
-    return { content, error: getResult(false, `Expected path to be a string, but got '${typeof path}'`), json }
+    return {
+      content,
+      error: getResult(false, `${applyKind('path', options?.kind)} to be a string, but got '${typeof path}'`),
+      json,
+    }
   }
 
   const exists = fs.existsSync(path)
-
-  const resultPrefix =
-    options?.type === 'expected' ? 'Expected file' : options?.type === 'received' ? 'Received file' : 'File'
 
   let message = ''
 
@@ -24,11 +25,11 @@ export function getFile(path: unknown, options?: FileOptions) {
       try {
         json = JSON.parse(content)
       } catch {
-        message = `${resultPrefix} at '${path}' is not a valid JSON file`
+        message = `${applyKind('file', options?.kind)} at '${path}' is not a valid JSON file`
       }
     }
   } else {
-    message = `${resultPrefix} at '${path}' does not exist`
+    message = `${applyKind('file', options?.kind)} at '${path}' does not exist`
   }
 
   const didError = message.length > 0
@@ -37,7 +38,35 @@ export function getFile(path: unknown, options?: FileOptions) {
   return { content, error, json }
 }
 
+export function getStats(path: unknown, options?: StatsOptions) {
+  if (typeof path !== 'string') {
+    return { error: getResult(false, `${applyKind('path', options?.kind)} to be a string, but got '${typeof path}'`) }
+  }
+
+  if (!fs.existsSync(path)) {
+    return { error: getResult(false, `${applyKind('path', options?.kind)} at '${path}' does not exist`) }
+  }
+
+  const stats = fs.statSync(path)
+
+  return { stats }
+}
+
+function applyKind(word: string, kind?: Kind) {
+  return kind === 'expected'
+    ? `Expected ${word}`
+    : kind === 'received'
+    ? `Received ${word}`
+    : word.charAt(0).toUpperCase() + word.slice(1)
+}
+
+type Kind = 'expected' | 'received'
+
 interface FileOptions {
   json?: boolean
-  type?: 'expected' | 'received'
+  kind?: Kind
+}
+
+interface StatsOptions {
+  kind?: Kind
 }

@@ -6,16 +6,14 @@ import { type MatcherState } from '.'
 export function toEqualFileContent(this: MatcherState, receivedContent: unknown, expectedPath: string) {
   const { equals, isNot, utils } = this
 
-  const expectedFile = getFile(expectedPath, { type: 'expected' })
+  const expectedFile = getFile(expectedPath, { kind: 'expected' })
 
   if (expectedFile.error) {
     return expectedFile.error
   }
 
-  const pass = equals(receivedContent, expectedFile.content)
-
   return getResultWithDiff(
-    pass,
+    equals(receivedContent, expectedFile.content),
     `Expected file content at '${expectedPath}' does${isNot ? '' : ' not'} equal received content`,
     utils.diff(expectedFile.content, receivedContent)
   )

@@ -14,10 +14,19 @@ test('should fail if the expected path does not exist', () => {
   )
 })
 
+test('should fail if the expected path is not a valid JSON file', () => {
+  const filePath = 'fixtures/file1'
+  const receivedContent = JSON.parse(fs.readFileSync('fixtures/file4.json', 'utf8'))
+
+  expect(() => expect(receivedContent).toEqualJsonFileContent(filePath)).toThrowError(
+    `Expected file at '${filePath}' is not a valid JSON file`
+  )
+})
+
 describe('to equal', () => {
   test('should fail if the received JSON content does not equal the expected path JSON content', () => {
     const filePath = 'fixtures/file3.json'
-    const receivedContent = fs.readFileSync('fixtures/file4.json', 'utf8')
+    const receivedContent = JSON.parse(fs.readFileSync('fixtures/file4.json', 'utf8'))
 
     expect(() => expect(receivedContent).toEqualJsonFileContent(filePath)).toThrowError(
       new RegExp(`^Expected file JSON content at '${filePath}' does not equal received JSON content`)
