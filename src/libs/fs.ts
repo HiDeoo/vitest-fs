@@ -1,48 +1,43 @@
 import fs from 'node:fs'
 
+import glob from 'fast-glob'
+
 import { getResult } from './result'
 
 export function getFile(path: unknown, options?: FileOptions) {
-  let content = ''
-  let json = {}
-
   if (typeof path !== 'string') {
     return {
-      content,
       error: getResult(false, `${applyKind('path', options?.kind)} to be a string, but got '${typeof path}'`),
-      json,
     }
   }
 
-  const exists = fs.existsSync(path)
-
-  let message = ''
-
-  if (exists) {
-    content = fs.readFileSync(path, 'utf8')
-
-    if (options?.removeWhitespaces) {
-      content = content.replace(/\s/g, '')
+  if (!fs.existsSync(path)) {
+    return {
+      error: getResult(false, `${applyKind('file', options?.kind)} at '${path}' does not exist`),
     }
+  }
 
-    if (options?.json) {
-      try {
-        json = JSON.parse(content)
-      } catch {
-        message = `${applyKind('file', options?.kind)} at '${path}' is not a valid JSON file`
+  let content = fs.readFileSync(path, 'utf8')
+  let json = {}
+
+  if (options?.removeWhitespaces) {
+    content = content.replace(/\s/g, '')
+  }
+
+  if (options?.json) {
+    try {
+      json = JSON.parse(content)
+    } catch {
+      return {
+        error: getResult(false, `${applyKind('file', options?.kind)} at '${path}' is not a valid JSON file`),
       }
     }
-  } else {
-    message = `${applyKind('file', options?.kind)} at '${path}' does not exist`
   }
 
-  const didError = message.length > 0
-  const error = didError ? getResult(!didError, message) : undefined
-
-  return { content, error, json }
+  return { content, json }
 }
 
-export function getStats(path: unknown, options?: StatsOptions) {
+export function getStats(path: unknown, options?: OptionsWithKind) {
   if (typeof path !== 'string') {
     return { error: getResult(false, `${applyKind('path', options?.kind)} to be a string, but got '${typeof path}'`) }
   }
@@ -56,6 +51,18 @@ export function getStats(path: unknown, options?: StatsOptions) {
   return { stats }
 }
 
+export function getDirectory(path: unknown, options?: OptionsWithKind) {
+  if (typeof path !== 'string') {
+    return { error: getResult(false, `${applyKind('path', options?.kind)} to be a string, but got '${typeof path}'`) }
+  }
+
+  if (!fs.existsSync(path)) {
+    return { error: getResult(false, `${applyKind('path', options?.kind)} at '${path}' does not exist`) }
+  }
+
+  return { content: glob.sync('**/*', { cwd: path, dot: true }) }
+}
+
 function applyKind(word: string, kind?: Kind) {
   return kind === 'expected'
     ? `Expected ${word}`
@@ -66,12 +73,11 @@ function applyKind(word: string, kind?: Kind) {
 
 type Kind = 'expected' | 'received'
 
-interface FileOptions {
-  json?: boolean
+interface OptionsWithKind {
   kind?: Kind
-  removeWhitespaces?: boolean | undefined
 }
 
-interface StatsOptions {
-  kind?: Kind
+interface FileOptions extends OptionsWithKind {
+  json?: boolean
+  removeWhitespaces?: boolean | undefined
 }
