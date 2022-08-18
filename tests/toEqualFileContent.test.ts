@@ -25,18 +25,18 @@ describe('to equal', () => {
   })
 
   test('should pass if the received content equals the expected path content', () => {
-    const content = fs.readFileSync('fixtures/file1-copy', 'utf8')
+    const receivedContent = fs.readFileSync('fixtures/file1-copy', 'utf8')
 
-    expect(() => expect(content).toEqualFileContent('fixtures/file1')).not.toThrowError()
+    expect(() => expect(receivedContent).toEqualFileContent('fixtures/file1')).not.toThrowError()
   })
 })
 
 describe('to not equal', () => {
   test('should fail if the received content equals the expected path content', () => {
     const filePath = 'fixtures/file1'
-    const content = fs.readFileSync('fixtures/file1-copy', 'utf8')
+    const receivedContent = fs.readFileSync('fixtures/file1-copy', 'utf8')
 
-    expect(() => expect(content).not.toEqualFileContent(filePath)).toThrowError(
+    expect(() => expect(receivedContent).not.toEqualFileContent(filePath)).toThrowError(
       `Expected file content at '${filePath}' does equal received content`
     )
   })
